@@ -1,0 +1,261 @@
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LOUAI ACADEMY</title>
+<style>
+:root{--bg:#0b1220;--panel:#142238;--text:#f4f7ff;--muted:#aab8cc;--blue:#398cff;--cyan:#35d6c4;--line:#2b405b}
+body.light{--bg:#f2f6fb;--panel:#fff;--text:#152338;--muted:#64748b;--line:#d9e2ed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial;line-height:1.8}
+header{background:var(--panel);padding:15px;position:sticky;top:0;border-bottom:1px solid var(--line);z-index:5}
+nav{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
+button{background:var(--blue);color:white;border:0;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:bold}
+nav button,.secondary{background:#263b55}
+main{max-width:1100px;margin:auto;padding:20px}
+section{display:none}
+section.active{display:block}
+.hero,.card{background:var(--panel);padding:22px;border:1px solid var(--line);border-radius:15px;margin-bottom:15px}
+.hero{text-align:center;padding:45px 20px}
+h1{font-size:clamp(28px,5vw,45px)}
+h2{color:var(--cyan)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px}
+input,select,textarea{width:100%;padding:12px;margin:6px 0 13px;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:9px;font:inherit}
+label{font-size:14px;color:var(--muted)}
+.item{background:var(--bg);padding:14px;border-radius:10px;margin:10px 0;border:1px solid var(--line)}
+.muted{color:var(--muted)}
+.stat{font-size:28px;color:var(--cyan);font-weight:bold}
+.hidden{display:none}
+.chat{height:230px;overflow:auto;background:var(--bg);padding:12px;border-radius:10px}
+.message{padding:9px;background:var(--panel);border-radius:9px;margin:8px 0}
+footer{text-align:center;padding:25px;color:var(--muted)}
+@media(max-width:650px){nav button{font-size:12px;padding:8px}}
+</style>
+</head>
+<body>
+<header>
+<h2 style="text-align:center">🎓 LOUAI ACADEMY 🇩🇿</h2>
+<nav>
+<button onclick="show('home')">الرئيسية</button>
+<button onclick="show('study')">الدراسة</button>
+<button onclick="show('tests')">الاختبارات</button>
+<button onclick="show('calculator')">حساب المعدل</button>
+<button onclick="show('student')">التلميذ</button>
+<button onclick="show('competition')">المسابقات</button>
+<button onclick="show('chat')">الشات</button>
+<button onclick="show('ai')">LOUAI AI</button>
+<button onclick="show('parents')">الأولياء</button>
+<button onclick="show('admin')">الإدارة</button>
+<button onclick="toggleTheme()">الوضع الليلي</button>
+</nav>
+</header>
+
+<main>
+<section id="home" class="active">
+<div class="hero">
+<h1>مستقبلك يبدأ من هنا</h1>
+<p>منصة LOUAI ACADEMY التعليمية الجزائرية المجانية.</p>
+<p>دروس وملخصات وفروض واختبارات ومسابقات ومساعد دراسي.</p>
+<button onclick="show('study')">ابدأ التعلم 📚</button>
+</div>
+<div class="grid">
+<div class="card"><h3>الابتدائي</h3><p>من الأولى إلى الخامسة ابتدائي</p><button onclick="chooseStage('primary')">الدخول</button></div>
+<div class="card"><h3>المتوسط</h3><p>من الأولى إلى الرابعة متوسط</p><button onclick="chooseStage('middle')">الدخول</button></div>
+<div class="card"><h3>الثانوي</h3><p>من الأولى إلى الثالثة ثانوي</p><button onclick="chooseStage('secondary')">الدخول</button></div>
+</div>
+</section>
+
+<section id="study">
+<h2>📚 المكتبة التعليمية</h2>
+<div class="card">
+<label>المرحلة الدراسية</label>
+<select id="stage" onchange="updateYears()">
+<option value="primary">ابتدائي</option>
+<option value="middle">متوسط</option>
+<option value="secondary" selected>ثانوي</option>
+</select>
+<label>السنة</label><select id="year" onchange="renderLessons()"></select>
+<label>الشعبة</label>
+<select id="branch">
+<option>جذع مشترك علوم وتكنولوجيا</option><option>جذع مشترك آداب</option>
+<option>علوم تجريبية</option><option>رياضيات</option><option>تقني رياضي</option>
+<option>تسيير واقتصاد</option><option>آداب وفلسفة</option><option>لغات أجنبية</option>
+</select>
+<label>المادة</label><select id="subject" onchange="renderLessons()"></select>
+<input id="search" placeholder="ابحث عن درس..." oninput="renderLessons()">
+<div id="lessons"></div>
+</div>
+</section>
+
+<section id="tests">
+<h2>📝 الفروض والاختبارات</h2>
+<div class="card">
+<p>اختبار تجريبي في المعارف الأساسية.</p>
+<button onclick="startQuiz()">ابدأ الاختبار</button>
+<div id="quiz"></div>
+</div>
+<div class="card"><h3>سجل النتائج</h3><div id="history"></div></div>
+</section>
+
+<section id="calculator">
+<h2>🧮 حساب المعدل الفصلي</h2>
+<div class="card">
+<div id="grades"></div>
+<button onclick="addGrade()">إضافة مادة</button>
+<button onclick="calculate()">احسب المعدل</button>
+<h2 id="average">المعدل: —</h2>
+</div>
+</section>
+
+<section id="student">
+<h2>👤 فضاء التلميذ</h2>
+<div class="card">
+<label>الاسم</label><input id="name" placeholder="اسم التلميذ">
+<label>السنة الدراسية</label><input id="className" placeholder="السنة والشعبة">
+<button onclick="saveProfile()">حفظ الملف</button>
+</div>
+<div class="grid">
+<div class="card"><div class="stat" id="points">0</div>النقاط</div>
+<div class="card"><div class="stat" id="done">0</div>الاختبارات المكتملة</div>
+<div class="card"><div class="stat" id="read">0</div>الدروس المقروءة</div>
+</div>
+<div class="card"><h3>🏅 إنجازاتي</h3><div id="badges">واصل التعلم!</div></div>
+<div class="card"><h3>برنامج المراجعة</h3><textarea id="plan" rows="4" placeholder="اكتب برنامجك الأسبوعي"></textarea><button onclick="savePlan()">حفظ البرنامج</button></div>
+</section>
+
+<section id="competition">
+<h2>🏆 المسابقات والأولمبياد</h2>
+<div class="grid">
+<div class="card"><h3>مسابقة الرياضيات</h3><p>تحديات الحساب والمنطق</p><button onclick="show('tests')">شارك</button></div>
+<div class="card"><h3>مسابقة العلوم</h3><p>اختبر معلوماتك العلمية</p><button onclick="show('tests')">شارك</button></div>
+<div class="card"><h3>مسابقة الفيزياء</h3><p>تحديات في الفيزياء</p><button onclick="show('tests')">شارك</button></div>
+</div>
+</section>
+
+<section id="chat">
+<h2>💬 المجتمع والشات</h2>
+<div class="card">
+<div class="chat" id="messages"></div>
+<form onsubmit="sendMessage(event)">
+<input id="message" placeholder="اكتب رسالتك..." required>
+<button>إرسال</button>
+</form>
+<p class="muted">هذه نسخة محلية؛ الشات الجماعي الحقيقي يحتاج خادماً وقاعدة بيانات مشتركة.</p>
+</div>
+</section>
+
+<section id="ai">
+<h2>🤖 LOUAI AI</h2>
+<div class="card">
+<p>مساعدك الدراسي التجريبي.</p>
+<textarea id="question" rows="4" placeholder="اكتب سؤالك الدراسي..."></textarea>
+<button onclick="askAI()">إرسال السؤال</button>
+<div class="item" id="answer">أنا مساعد LOUAI. كيف أساعدك؟</div>
+<p class="muted">الإجابات الذكية الحقيقية تتطلب ربط API بخادم آمن.</p>
+</div>
+</section>
+
+<section id="parents">
+<h2>👨‍👩‍👧 فضاء الأولياء</h2>
+<div class="card">
+<h3>تقرير التلميذ</h3>
+<div id="report"></div>
+<button onclick="refresh()">تحديث التقرير</button>
+</div>
+</section>
+
+<section id="admin">
+<h2>⚙️ لوحة الإدارة</h2>
+<div class="card">
+<p class="muted">لوحة محلية تجريبية وليست نظام حماية للنشر العام.</p>
+<label>رمز الإدارة التجريبي</label>
+<input id="password" type="password">
+<button onclick="unlock()">فتح الإدارة</button>
+<div id="adminTools" class="hidden">
+<h3>إضافة درس</h3>
+<input id="newTitle" placeholder="عنوان الدرس">
+<input id="newSubject" placeholder="المادة">
+<textarea id="newContent" placeholder="محتوى الدرس"></textarea>
+<button onclick="addLesson()">إضافة</button>
+</div>
+</div>
+</section>
+
+<section id="bank">
+<h2>📜 بنك BEM و BAC</h2>
+<div class="card">
+<p>مساحة لتنظيم مواضيع الشهادات حسب السنة والمادة.</p>
+<p>أضف ملفات PDF وروابط المواضيع الرسمية عند توفرها.</p>
+</div>
+</section>
+</main>
+<footer>LOUAI ACADEMY 🇩🇿 | التعليم حق للجميع</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let stats=load('stats',{points:0,done:0,read:[]});
+let profile=load('profile',{});
+let lessons=load('lessons',[
+{title:'مجموعات الأعداد',subject:'الرياضيات',content:'N مجموعة الأعداد الطبيعية، Z الأعداد الصحيحة، D الأعداد العشرية، Q الأعداد الناطقة، R الأعداد الحقيقية.'},
+{title:'البرهان بالخلف',subject:'الرياضيات',content:'نفترض عكس المطلوب ثم نصل إلى تناقض، فنستنتج أن الفرض العكسي خاطئ.'},
+{title:'بنية الذرة',subject:'الفيزياء',content:'تتكون الذرة من نواة تضم بروتونات ونيوترونات وإلكترونات حول النواة.'},
+{title:'الانقسام الخيطي',subject:'العلوم',content:'مراحله: الطور التمهيدي، الاستوائي، الانفصالي، والنهائي.'},
+{title:'مقدمة في التكنولوجيا',subject:'التكنولوجيا',content:'دراسة المنتجات التقنية والحاجات التي تلبيها.'},
+{title:'مقدمة في الإعلام الآلي',subject:'الإعلام الآلي',content:'المعالجة الآلية للمعلومات باستخدام الحاسوب.'}
+]);
+let chat=load('chat',[]);
+let questions=[
+{q:'ما رمز مجموعة الأعداد الطبيعية؟',a:['Z','N','Q'],c:1},
+{q:'ما نتيجة 9 × 7؟',a:['56','63','72'],c:1},
+{q:'كم طوراً أساسياً للانقسام الخيطي؟',a:['2','3','4'],c:2},
+{q:'ما وحدة شدة التيار الكهربائي؟',a:['الأمبير','الفولت','المتر'],c:0}
+];
+let qi=0,score=0;
+function show(id){document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');refresh()}
+function chooseStage(s){$('stage').value=s;updateYears();show('study')}
+function toggleTheme(){document.body.classList.toggle('light')}
+function updateYears(){
+let s=$('stage').value;
+let a=s==='primary'?['الأولى ابتدائي','الثانية ابتدائي','الثالثة ابتدائي','الرابعة ابتدائي','الخامسة ابتدائي']:s==='middle'?['الأولى متوسط','الثانية متوسط','الثالثة متوسط','الرابعة متوسط']:['الأولى ثانوي','الثانية ثانوي','الثالثة ثانوي'];
+$('year').innerHTML=a.map(x=>`<option>${x}</option>`).join('');
+let subjects=s==='primary'?['اللغة العربية','الرياضيات','الفرنسية','التربية الإسلامية','التربية العلمية']:s==='middle'?['اللغة العربية','الرياضيات','العلوم','الفيزياء','التاريخ والجغرافيا','الفرنسية','الإنجليزية']:['الرياضيات','الفيزياء','العلوم','التكنولوجيا','الإعلام الآلي','اللغة العربية'];
+$('subject').innerHTML=subjects.map(x=>`<option>${x}</option>`).join('');renderLessons()
+}
+function renderLessons(){
+let s=$('subject').value,q=$('search').value.toLowerCase();
+let a=lessons.filter(x=>(!s||x.subject===s)&&x.title.toLowerCase().includes(q));
+$('lessons').innerHTML=a.length?a.map(x=>`<div class="item"><h3>${esc(x.title)}</h3><p>${esc(x.content)}</p><button onclick="readLesson('${encodeURIComponent(x.title)}')">تمت القراءة</button></div>`).join(''):'لا توجد دروس مطابقة حالياً.'
+}
+function readLesson(t){let title=decodeURIComponent(t);if(!stats.read.includes(title)){stats.read.push(title);stats.points+=5;save('stats',stats)}refresh()}
+function startQuiz(){qi=0;score=0;showQuestion()}
+function showQuestion(){
+if(qi>=questions.length){stats.done++;stats.points+=score*10;save('stats',stats);$('quiz').innerHTML=`<h2>نتيجتك ${score}/${questions.length}</h2><button onclick="startQuiz()">إعادة الاختبار</button>`;refresh();return}
+let q=questions[qi];$('quiz').innerHTML=`<p>السؤال ${qi+1} من ${questions.length}</p><h3>${q.q}</h3>`+q.a.map((a,i)=>`<button class="item" style="display:block;width:100%;color:var(--text);text-align:right" onclick="answer(${i})">${a}</button>`).join('')
+}
+function answer(i){if(i===questions[qi].c)score++;qi++;showQuestion()}
+function addGrade(){let d=document.createElement('div');d.className='grid';d.innerHTML='<input class="grade" type="number" min="0" max="20" placeholder="العلامة /20"><input class="coef" type="number" min="1" value="1" placeholder="المعامل">';$('grades').appendChild(d)}
+function calculate(){let marks=[...document.querySelectorAll('.grade')],coefs=[...document.querySelectorAll('.coef')],sum=0,total=0;marks.forEach((x,i)=>{let m=Number(x.value),c=Number(coefs[i].value);if(x.value!==''&&m>=0&&m<=20&&c>0){sum+=m*c;total+=c}});$('average').textContent=total?'المعدل: '+(sum/total).toFixed(2)+'/20':'أدخل علامات صحيحة'}
+function saveProfile(){profile={name:$('name').value,cls:$('className').value};save('profile',profile);refresh();alert('تم الحفظ')}
+function sendMessage(e){e.preventDefault();chat.push({name:profile.name||'تلميذ',text:$('message').value});save('chat',chat);$('message').value='';renderChat()}
+function renderChat(){$('messages').innerHTML=chat.map(m=>`<div class="message"><b>${esc(m.name)}</b><br>${esc(m.text)}</div>`).join('')}
+function askAI(){let q=$('question').value.trim();$('answer').textContent=q?'وصل سؤالك: '+q+'. هذه نسخة تجريبية ولا تتصل بعد بنموذج ذكاء اصطناعي.':'اكتب سؤالك أولاً.'}
+function unlock(){if($('password').value==='LOUAI-LOCAL-ADMIN')$('adminTools').classList.remove('hidden');else alert('رمز غير صحيح')}
+function addLesson(){let title=$('newTitle').value.trim(),subject=$('newSubject').value.trim(),content=$('newContent').value.trim();if(!title||!subject||!content)return alert('أكمل الحقول');lessons.push({title,subject,content});save('lessons',lessons);renderLessons();alert('تمت الإضافة')}
+function savePlan(){save('plan',$('plan').value);alert('تم حفظ البرنامج')}
+function refresh(){
+$('points').textContent=stats.points;$('done').textContent=stats.done;$('read').textContent=stats.read.length;
+$('badges').textContent=(stats.points>=20?'🌟 جامع النقاط ':'')+(stats.done>=3?'🏆 بطل الاختبارات ':'')+(stats.read.length>=3?'📚 قارئ نشيط':'واصل التعلم للحصول على الشارات');
+$('report').textContent=`الاسم: ${profile.name||'غير مسجل'} | الدروس: ${stats.read.length} | الاختبارات: ${stats.done} | النقاط: ${stats.points}`;
+$('history').textContent='عدد الاختبارات المكتملة: '+stats.done;
+renderChat()
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+updateYears();addGrade();addGrade();$('plan').value=load('plan','');refresh();
+</script>
+</body>
+</html>
+```
